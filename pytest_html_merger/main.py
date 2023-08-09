@@ -44,8 +44,11 @@ def merge_html_files(in_path, out_path, title):
             head.append(first_file.new_tag("style", type="text/css"))
             head.style.append(content)
 
+    _title = title if title else os.path.basename(out_path)
     h = first_file.find("h1")
-    h.string = title if title else os.path.basename(out_path)
+    h.string = _title
+    t = first_file.find("title")
+    t.string = _title
 
     t = first_file.find("table", {"id": "results-table"})
 
