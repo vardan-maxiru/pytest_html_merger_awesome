@@ -132,7 +132,7 @@ def merge_html_files(in_path, out_path, title):
 
         main_table.find('tbody', features="html.parser").append(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result">{res}</td></tr>')
 
-    first_file.find("table", {"id": "results-table"}).replace_with(main_table)
+    first_file.find("table", {"id": "results-table"}).append(main_table)
     res = first_file.find_all("p")
     for p in res:
         if " tests ran" in p.text:
