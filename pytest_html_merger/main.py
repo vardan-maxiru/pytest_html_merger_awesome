@@ -26,6 +26,7 @@ def merge_html_files(in_path, out_path, title):
     first_file = BeautifulSoup("".join(open(paths[0])), features="html.parser")
 
     main_table = BeautifulSoup("<table id='results-table'><tbody></tbody></table>", features="html.parser")
+    main_table_body = BeautifulSoup("<tbody></tbody>", features="html.parser")
 
     try:
         first_file.find("link").decompose()
@@ -89,7 +90,7 @@ def merge_html_files(in_path, out_path, title):
     
     main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{dur}</td></tr><tr><td colspan="3" class="case-report-result"></td></tr>', features="html.parser")
     main_table_row.find('td', {'class': 'case-report-result'}).append(t)
-    main_table.find('tbody', features="html.parser").append(main_table_row)
+    main_table_body.append(main_table_row)
 
     for i in range(len(paths)):
         path = paths[i]
@@ -135,7 +136,7 @@ def merge_html_files(in_path, out_path, title):
         # res.id = f"results-table-{i}"
         main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result"></td></tr>', features="html.parser")
         main_table_row.find('td', {'class': 'case-report-result'}).append(res)
-        main_table.find('tbody', features="html.parser").append(main_table_row)
+        main_table_body.append(main_table_row)
 
     first_file.find("table", {"id": "results-table"}).replace_with(main_table)
     res = first_file.find_all("p")
