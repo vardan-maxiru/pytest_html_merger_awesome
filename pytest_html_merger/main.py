@@ -89,7 +89,7 @@ def merge_html_files(in_path, out_path, title):
         status = 'Skipped'
     
     main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{dur}</td></tr><tr><td colspan="3" class="case-report-result"></td></tr>', features="html.parser")
-    main_table_row.find('td', {'class': 'case-report-result'}).insert(0, t)
+    main_table_row.find_all('td', {'class': 'case-report-result'}).insert(0, t)
     main_table_body.append(main_table_row)
 
     for i in range(len(paths)):
@@ -135,7 +135,7 @@ def merge_html_files(in_path, out_path, title):
         res = second_file.find_all("talbe", {"id": "results-table"})
         # res.id = f"results-table-{i}"
         main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result"></td></tr>', features="html.parser")
-        main_table_row.find('td', {'class': 'case-report-result'}).insert(0, res)
+        main_table_row.find_all('td', {'class': 'case-report-result'}).insert(0, res)
         main_table_body.append(main_table_row)
 
     first_file.find("table", {"id": "results-table"}).replace_with(main_table)
