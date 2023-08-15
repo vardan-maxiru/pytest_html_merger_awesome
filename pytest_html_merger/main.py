@@ -25,7 +25,7 @@ def merge_html_files(in_path, out_path, title):
 
     first_file = BeautifulSoup("".join(open(paths[0])), features="html.parser")
 
-    main_table = BeautifulSoup("<table id='results-table'><tbody></tbody></table>")
+    main_table = BeautifulSoup("<table id='results-table'><tbody></tbody></table>", features="html.parser")
 
     try:
         first_file.find("link").decompose()
