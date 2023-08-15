@@ -90,7 +90,8 @@ def merge_html_files(in_path, out_path, title):
     main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{dur}</td></tr><tr><td colspan="3" class="case-report-result">{t}</td></tr>', "xml")
     main_table.find('tbody', features="html.parser").append(main_table_row)
 
-    for path in paths:
+    for i in range(len(paths)):
+        path = paths[i]
         if path == paths[0]:
             continue
 
@@ -130,6 +131,7 @@ def merge_html_files(in_path, out_path, title):
             status = 'Skipped'
 
         res = second_file.find_all("talbe", {"id": "results-table"})
+        res.id = f"results-table-{i}"
         main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result">{res}</td></tr>', "xml")
         main_table.find('tbody', features="html.parser").append(main_table_row)
 
