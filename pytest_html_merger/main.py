@@ -94,8 +94,8 @@ def merge_html_files(in_path, out_path, title):
             continue
 
         second_file = BeautifulSoup("".join(open(path)), features="html.parser")
-        for elm in res:
-            t.append(elm)
+        # for elm in res:
+        #     t.append(elm)
 
         res = second_file.find_all("p")
         current_case_duration = 0
