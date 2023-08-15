@@ -87,7 +87,8 @@ def merge_html_files(in_path, out_path, title):
     elif cb_types["skipped"][0] > 0:
         status = 'Skipped'
     
-    main_table.find('tbody', features="html.parser").append(f'<tr><td>{case_title}</td><td>{status}</td><td>{dur}</td></tr><tr><td colspan="3" class="case-report-result">{t}</td></tr>')
+    main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{dur}</td></tr><tr><td colspan="3" class="case-report-result">{t}</td></tr>', "xml")
+    main_table.find('tbody', features="html.parser").append(main_table_row)
 
     for path in paths:
         if path == paths[0]:
@@ -129,10 +130,10 @@ def merge_html_files(in_path, out_path, title):
             status = 'Skipped'
 
         res = second_file.find_all("talbe", {"id": "results-table"})
+        main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result">{res}</td></tr>', "xml")
+        main_table.find('tbody', features="html.parser").append(main_table_row)
 
-        main_table.find('tbody', features="html.parser").append(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result">{res}</td></tr>')
-
-    first_file.find("table", {"id": "results-table"}).append(main_table)
+    first_file.find("table", {"id": "results-table"}).replace_with(main_table)
     res = first_file.find_all("p")
     for p in res:
         if " tests ran" in p.text:
