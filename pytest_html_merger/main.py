@@ -180,6 +180,7 @@ def create_case_container(soup: BeautifulSoup, new_table_soup, index = 1):
     new_headers_soup = BeautifulSoup(new_headers, 'html.parser').find('div', {"class": "case-row-headers"})
 
     status_data = get_case_status(result_table)
+    print("\nstatus data: ", status_data)
     new_headers_soup.attrs['class'] = [*new_headers_soup.attrs['class'], status_data.get("className", CaseStatuses.FAILED.value.lower())]
     status_title = status_data.get('title', CaseStatuses.FAILED.value)
     
@@ -222,7 +223,7 @@ def get_case_status(soup: BeautifulSoup):
     if is_failed:
         return CaseStatusData.get_failed_data()
     
-    is_passed = any([CaseStatuses.PASSED.value.lower() in status.lower() for status in statuses])
+    is_passed = any([CaseStatuses.PASSED.value.lower() == status.lower() for status in statuses])
     if is_passed:
         return CaseStatusData.get_passed_data()
     
