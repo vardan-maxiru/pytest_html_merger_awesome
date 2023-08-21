@@ -1,3 +1,7 @@
+#results-table {
+  border: none;
+}
+
 .case-row {
     display: flex;
     flex-direction: column;
@@ -38,7 +42,7 @@
 }
 
 .case-row-headers.passed {
-  background:#b5ffc8;
+  background:#d5f5dd;
   color: green;
 }
 
@@ -60,6 +64,7 @@
 .case-row-results {
     display: none;
     height: 0;
+    padding: 0 10px 10px;
 }
 
 .case-row-results.open {
