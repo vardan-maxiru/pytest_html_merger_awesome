@@ -109,7 +109,7 @@ def merge_html_files(in_path, out_path, title):
             continue
 
         second_file = BeautifulSoup("".join(open(path)), features="html.parser")
-        h = first_file.find("h1")
+        h = second_file.find("h1")
         case_title = h.string
         # for elm in res:
         #     t.append(elm)
