@@ -24,17 +24,17 @@ def merge_html_files(in_path, out_path, title):
     if not paths:
         raise RuntimeError(f"Was unable to find html files in {in_path}")
 
-    style = pkg_resources.resource_string(__name__, 'resources/style.css')
-    # with open('./resources/style.css', 'r') as style:
-    css_styles = style.read()
-    report_style = f"<style>{css_styles}</style>"
-    style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
+    css_resource_path = pkg_resources.resource_filename(__name__, 'resources/style.css')
+    with open(css_resource_path, 'r') as style:
+        css_styles = style.read()
+        report_style = f"<style>{css_styles}</style>"
+        style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
 
-    js_file = pkg_resources.resource_string(__name__, 'resources/report.js')
-    # with open('./resources/report.js', 'r') as js_file:
-    js = js_file.read()
-    report_js = f"<script>{js}</script>"
-    js_soup = BeautifulSoup(report_js, 'html.parser').find('script')
+    js_resource_path = pkg_resources.resource_string(__name__, 'resources/report.js')
+    with open(js_resource_path, 'r') as js_file:
+        js = js_file.read()
+        report_js = f"<script>{js}</script>"
+        js_soup = BeautifulSoup(report_js, 'html.parser').find('script')
 
     assets_dir_path = get_assets_path(in_path)
 
