@@ -37,7 +37,7 @@
 }
 
 .case-row-headers.failed {
-  background:#ffe4e2;
+  background:#fff1f0;
   color: red;
 }
 
@@ -47,17 +47,17 @@
 }
 
 .case-row-headers.skipped {
-  background:#ffe8c6;
+  background:#fff5e7;
   color: orange;
 }
 
 .case-row-headers.expected-failures {
-  background:#ffe8c6;
+  background:#fff5e7;
   color: orange;
 }
 
 .case-row-headers.unexpected-passes {
-  background:#ffe4e2;
+  background:#fff1f0;
   color: red;
 }
 
