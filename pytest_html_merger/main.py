@@ -185,7 +185,7 @@ def create_case_container(soup: BeautifulSoup, title, current_case_duration, ind
     
     # add duration column
     new_header_item_soup = get_header_item('duration')
-    new_header_item_soup.string = current_case_duration
+    new_header_item_soup.string = f'{current_case_duration}'
     new_headers_soup.append(new_header_item_soup)
     
 
