@@ -5,6 +5,8 @@ from bs4 import BeautifulSoup
 import sys
 import pathlib
 
+from helpers import CaseStatuses, CaseStatusData
+
 
 CUR_PATH = "{0}/".format(os.path.dirname(__file__))
 
@@ -21,6 +23,15 @@ def merge_html_files(in_path, out_path, title):
     if not paths:
         raise RuntimeError(f"Was unable to find html files in {in_path}")
 
+    with open('./assets/style.css', 'r') as style:
+        css_styles = style.read()
+        report_style = f"<style>{css_styles}</style>"
+        style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
+
+    with open('./assets/report.js', 'r') as js_file:
+        js = js_file.read()
+        report_js = f"<script>{js}</script>"
+        js_soup = BeautifulSoup(report_js, 'html.parser').find('script')
     assets_dir_path = get_assets_path(in_path)
 
     first_file = BeautifulSoup("".join(open(paths[0])), features="html.parser")
@@ -46,6 +57,9 @@ def merge_html_files(in_path, out_path, title):
             head = first_file.head
             head.append(first_file.new_tag("style", type="text/css"))
             head.style.append(content)
+
+    first_file.find('head').append(style_soup)
+    first_file.find('body').append(js_soup)
 
     _title = title if title else os.path.basename(out_path)
     h = first_file.find("h1")
@@ -88,9 +102,12 @@ def merge_html_files(in_path, out_path, title):
     elif cb_types["skipped"][0] > 0:
         status = 'Skipped'
     
-    main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{dur}</td></tr><tr><td colspan="3" class="case-report-result"></td></tr>', features="html.parser")
-    main_table_row.find_all('td', {'class': 'case-report-result'}).insert(0, t)
-    main_table_body.insert(0, main_table_row)
+    new_table = '<div id="main-table"></div>'
+    new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "main-table"})
+    
+    new_case_soup = create_case_container(first_file, new_table_soup) # first_file
+    new_table_soup.append(new_case_soup)
+    first_file.body.append(new_table_soup)
 
     for i in range(len(paths)):
         path = paths[i]
@@ -132,14 +149,10 @@ def merge_html_files(in_path, out_path, title):
         elif current_cb_types["skipped"][0] > 0:
             status = 'Skipped'
 
-        res = second_file.find_all("talbe", {"id": "results-table"})
-        # res.id = f"results-table-{i}"
-        main_table_row = BeautifulSoup(f'<tr><td>{case_title}</td><td>{status}</td><td>{current_case_duration}</td></tr><tr><td colspan="3" class="case-report-result"></td></tr>', features="html.parser")
-        main_table_row.find_all('td', {'class': 'case-report-result'}).insert(0, res)
-        main_table_body.insert(i, main_table_row)
+        new_case_soup = create_case_container(second_file, new_table_soup, i)
+        new_table_soup.append(new_case_soup)
+        first_file.body.append(new_table_soup)
 
-    main_table.insert(0, main_table_body)
-    first_file.find("table", {"id": "results-table"}).replace_with(main_table)
     res = first_file.find_all("p")
     for p in res:
         if " tests ran" in p.text:
@@ -153,6 +166,77 @@ def merge_html_files(in_path, out_path, title):
     with open(out_path, "w") as f:
         f.write(str(first_file))
 
+def create_case_container(soup: BeautifulSoup, new_table_soup, index = 1):
+    result_table = soup.find('table', {"id": "results-table"})
+    result_table.attrs = {**result_table.attrs, "id": f'results-table-{index}', 'class': 'results-table'}
+
+    new_case = '<div class="case-row"></div>'
+    new_headers = '<div class="case-row-headers"></div>'
+    new_results_row = '<div class="case-row-results"></div>'
+    
+    new_results_row_soup = BeautifulSoup(new_results_row, 'html.parser')
+    new_results_row_soup.find('div', {"class": "case-row-results"}).append(result_table)
+    
+    new_headers_soup = BeautifulSoup(new_headers, 'html.parser').find('div', {"class": "case-row-headers"})
+
+    status_data = get_case_status(result_table)
+    new_headers_soup.attrs['class'] = [*new_headers_soup.attrs['class'], status_data.get("className", CaseStatuses.FAILED.value.lower())]
+    status_title = status_data.get('title', CaseStatuses.FAILED.value)
+    
+    # add title column
+    new_header_item_soup = get_header_item('title')
+    new_header_item_soup.string = "Case - XXX"
+    new_headers_soup.append(new_header_item_soup)
+
+    # add status column
+    new_header_item_soup = get_header_item('status')
+    new_header_item_soup.string = status_title
+    new_headers_soup.append(new_header_item_soup)
+    
+    # add duration column
+    new_header_item_soup = get_header_item('duration')
+    new_header_item_soup.string = "3.2 seconds"
+    new_headers_soup.append(new_header_item_soup)
+    
+
+    new_case_soup = BeautifulSoup(new_case, 'html.parser').find('div', {"class": "case-row"})
+    new_case_soup.append(new_headers_soup)
+    new_case_soup.append(new_results_row_soup)
+
+    return new_case_soup
+
+def get_header_item(className = ''):
+    new_header_item = '<div class="case-row-headers__item"></div>'
+    soup = BeautifulSoup(new_header_item, 'html.parser').find('div', {"class": "case-row-headers__item"})
+    if className:
+        soup.attrs['class'] = [*soup.attrs['class'], className]
+    return soup
+
+def get_case_status(soup: BeautifulSoup):
+    results = soup.find_all('td', {'class': 'col-result'})
+    statuses = [td.string.upper() for td in results]
+    
+    is_failed = any([CaseStatuses.FAILED.value.lower() == status.lower() for status in statuses])
+    if is_failed:
+        return CaseStatusData.get_failed_data()
+    
+    is_passed = any([CaseStatuses.PASSED.value.lower() == status.lower() for status in statuses])
+    if is_passed:
+        return CaseStatusData.get_passed_data()
+    
+    is_skipped = all([CaseStatuses.SKIPPED.value.lower() == status.lower() for status in statuses])
+    if is_skipped:
+        return CaseStatusData.get_skipped_data()
+    
+    is_expected_failures = any([CaseStatuses.EXPECTED_FAILURES.value.lower() == status.lower() for status in statuses])
+    if is_expected_failures:
+        return CaseStatusData.get_expected_faileres_data()
+    
+    is_unexpected_passes = any([CaseStatuses.UNEXPECTED_PASSES.value.lower() == status.lower() for status in statuses])
+    if is_unexpected_passes:
+        return CaseStatusData.get_unexpected_passes_data()
+    
+    return {}
 
 def set_checkbox_value(root_soap, cb_type, val):
     elem = root_soap.find("span", {"class": cb_type})
