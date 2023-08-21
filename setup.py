@@ -23,5 +23,5 @@ setuptools.setup(
         "console_scripts": ["pytest_html_merger = pytest_html_merger.main:main"]
     },
     include_package_data=True,
-    package_data={'': 'resources/*'}
+    package_data={'': ['resources/*.*']}
 )
