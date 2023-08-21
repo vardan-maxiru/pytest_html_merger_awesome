@@ -39,6 +39,7 @@ def merge_html_files(in_path, out_path, title):
     assets_dir_path = get_assets_path(in_path)
 
     first_file = BeautifulSoup("".join(open(paths[0])), features="html.parser")
+    first_file.script.clear()
 
     try:
         first_file.find("link").decompose()
