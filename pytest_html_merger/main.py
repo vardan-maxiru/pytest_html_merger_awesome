@@ -4,6 +4,7 @@ import os
 from bs4 import BeautifulSoup
 import sys
 import pathlib
+import pkg_resources
 
 from helpers import CaseStatuses, CaseStatusData
 
@@ -23,17 +24,16 @@ def merge_html_files(in_path, out_path, title):
     if not paths:
         raise RuntimeError(f"Was unable to find html files in {in_path}")
     
-    assets_dir = os.path.join(os.path.dirname(__file__), 'assets')
+    style = pkg_resources.resource_stream(__name__, 'resources/style.css')
+    css_styles = style.read()
+    report_style = f"<style>{css_styles}</style>"
+    style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
 
-    with open(os.path.join(assets_dir, 'style.css'), 'r') as style:
-        css_styles = style.read()
-        report_style = f"<style>{css_styles}</style>"
-        style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
-
-    with open(os.path.join(assets_dir, 'report.js'), 'r') as js_file:
-        js = js_file.read()
-        report_js = f"<script>{js}</script>"
-        js_soup = BeautifulSoup(report_js, 'html.parser').find('script')
+    js_file = pkg_resources.resource_stream(__name__, 'resources/report.js')
+    js = js_file.read()
+    report_js = f"<script>{js}</script>"
+    js_soup = BeautifulSoup(report_js, 'html.parser').find('script')
+    
     assets_dir_path = get_assets_path(in_path)
 
     first_file = BeautifulSoup("".join(open(paths[0])), features="html.parser")
