@@ -27,7 +27,7 @@ def merge_html_files(in_path, out_path, title):
     css_resource_path = pkg_resources.resource_filename(__name__, 'resources/style.css').encode()
     with open(css_resource_path.decode(), 'r') as style:
         css_styles = style.read()
-        report_style = f"<style>{style}</style>"
+        report_style = f"<style>{css_styles}</style>"
         style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
 
     js_resource_path = pkg_resources.resource_filename(__name__, 'resources/report.js').encode()
