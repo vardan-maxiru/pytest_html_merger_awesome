@@ -22,22 +22,21 @@ def merge_html_files(in_path, out_path, title):
     paths = get_html_files(in_path)
     if not paths:
         raise RuntimeError(f"Was unable to find html files in {in_path}")
+    
+    assets_dir = os.path.join(os.path.dirname(__file__), 'assets')
 
-    with open('./assets/style.css', 'r') as style:
+    with open(os.path.join(assets_dir, 'style.css'), 'r') as style:
         css_styles = style.read()
         report_style = f"<style>{css_styles}</style>"
         style_soup = BeautifulSoup(report_style, 'html.parser').find('style')
 
-    with open('./assets/report.js', 'r') as js_file:
+    with open(os.path.join(assets_dir, 'report.js'), 'r') as js_file:
         js = js_file.read()
         report_js = f"<script>{js}</script>"
         js_soup = BeautifulSoup(report_js, 'html.parser').find('script')
     assets_dir_path = get_assets_path(in_path)
 
     first_file = BeautifulSoup("".join(open(paths[0])), features="html.parser")
-
-    main_table = BeautifulSoup("<table id='results-table'><tbody></tbody></table>", features="html.parser")
-    main_table_body = BeautifulSoup("<tbody></tbody>", features="html.parser")
 
     try:
         first_file.find("link").decompose()
