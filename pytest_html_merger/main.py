@@ -96,17 +96,11 @@ def merge_html_files(in_path, out_path, title):
             dur = float(tmp[4])
 
             break
-    if cb_types['failed'][0] > 0:
-        status = 'Failed'
-    elif cb_types["passed"][0] > 0:
-        status = 'Passed'
-    elif cb_types["skipped"][0] > 0:
-        status = 'Skipped'
     
     new_table = '<div id="results-table"></div>'
     new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "results-table"})
     
-    new_case_soup = create_case_container(first_file, new_table_soup) # first_file
+    new_case_soup = create_case_container(first_file, case_title, dur) # first_file
     new_table_soup.append(new_case_soup)
 
     for i in range(len(paths)):
@@ -115,6 +109,8 @@ def merge_html_files(in_path, out_path, title):
             continue
 
         second_file = BeautifulSoup("".join(open(path)), features="html.parser")
+        h = first_file.find("h1")
+        case_title = h.string
         # for elm in res:
         #     t.append(elm)
 
@@ -142,14 +138,7 @@ def merge_html_files(in_path, out_path, title):
             cb_types[cb_type][0] += tmp[0]
             current_cb_types[cb_type][0] = tmp[0]
 
-        if current_cb_types['failed'][0] > 0:
-            status = 'Failed'
-        elif current_cb_types["passed"][0] > 0:
-            status = 'Passed'
-        elif current_cb_types["skipped"][0] > 0:
-            status = 'Skipped'
-
-        new_case_soup = create_case_container(second_file, new_table_soup, i)
+        new_case_soup = create_case_container(second_file, case_title, current_case_duration, i)
         new_table_soup.append(new_case_soup)
 
     first_file.body.append(new_table_soup)
@@ -166,7 +155,7 @@ def merge_html_files(in_path, out_path, title):
     with open(out_path, "w") as f:
         f.write(str(first_file))
 
-def create_case_container(soup: BeautifulSoup, new_table_soup, index = 1):
+def create_case_container(soup: BeautifulSoup, title, current_case_duration, index = 1):
     result_table = soup.find('table', {"id": "results-table"})
     result_table.attrs = {**result_table.attrs, "id": f'results-table-{index}', 'class': 'results-table'}
 
@@ -181,12 +170,12 @@ def create_case_container(soup: BeautifulSoup, new_table_soup, index = 1):
 
     status_data = get_case_status(result_table)
     print("\nstatus data: ", status_data)
-    new_headers_soup.attrs['class'] = [*new_headers_soup.attrs['class'], status_data.get("className", CaseStatuses.FAILED.value.lower())]
+    new_headers_soup.attrs['class'] = [*new_headers_soup.attrs['class'], status_data.get("class_name", CaseStatuses.FAILED.value.lower())]
     status_title = status_data.get('title', CaseStatuses.FAILED.value)
     
     # add title column
     new_header_item_soup = get_header_item('title')
-    new_header_item_soup.string = "Case - XXX"
+    new_header_item_soup.string = title
     new_headers_soup.append(new_header_item_soup)
 
     # add status column
@@ -196,7 +185,7 @@ def create_case_container(soup: BeautifulSoup, new_table_soup, index = 1):
     
     # add duration column
     new_header_item_soup = get_header_item('duration')
-    new_header_item_soup.string = "3.2 seconds"
+    new_header_item_soup.string = current_case_duration
     new_headers_soup.append(new_header_item_soup)
     
 
