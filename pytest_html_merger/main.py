@@ -169,7 +169,6 @@ def create_case_container(soup: BeautifulSoup, title, current_case_duration, ind
     new_headers_soup = BeautifulSoup(new_headers, 'html.parser').find('div', {"class": "case-row-headers"})
 
     status_data = get_case_status(result_table)
-    print("\nstatus data: ", status_data)
     new_headers_soup.attrs['class'] = [*new_headers_soup.attrs['class'], status_data.get("class_name", CaseStatuses.FAILED.value.lower())]
     status_title = status_data.get('title', CaseStatuses.FAILED.value)
     
@@ -205,8 +204,6 @@ def get_header_item(className = ''):
 def get_case_status(soup: BeautifulSoup):
     results = soup.find_all('td', {'class': 'col-result'})
     statuses = [td.string.upper() for td in results]
-
-    print("\nstatuses", statuses)
     
     is_failed = any([CaseStatuses.FAILED.value.lower() == status.lower() for status in statuses])
     if is_failed:
