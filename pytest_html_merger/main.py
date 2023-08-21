@@ -102,12 +102,11 @@ def merge_html_files(in_path, out_path, title):
     elif cb_types["skipped"][0] > 0:
         status = 'Skipped'
     
-    new_table = '<div id="main-table"></div>'
-    new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "main-table"})
+    new_table = '<div id="results-table"></div>'
+    new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "results-table"})
     
     new_case_soup = create_case_container(first_file, new_table_soup) # first_file
     new_table_soup.append(new_case_soup)
-    first_file.body.append(new_table_soup)
 
     for i in range(len(paths)):
         path = paths[i]
@@ -151,8 +150,8 @@ def merge_html_files(in_path, out_path, title):
 
         new_case_soup = create_case_container(second_file, new_table_soup, i)
         new_table_soup.append(new_case_soup)
-        first_file.body.append(new_table_soup)
 
+    first_file.body.append(new_table_soup)
     res = first_file.find_all("p")
     for p in res:
         if " tests ran" in p.text:
