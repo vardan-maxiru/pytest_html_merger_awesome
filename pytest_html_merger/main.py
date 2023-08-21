@@ -215,12 +215,14 @@ def get_header_item(className = ''):
 def get_case_status(soup: BeautifulSoup):
     results = soup.find_all('td', {'class': 'col-result'})
     statuses = [td.string.upper() for td in results]
+
+    print("\nstatuses", statuses)
     
     is_failed = any([CaseStatuses.FAILED.value.lower() == status.lower() for status in statuses])
     if is_failed:
         return CaseStatusData.get_failed_data()
     
-    is_passed = any([CaseStatuses.PASSED.value.lower() == status.lower() for status in statuses])
+    is_passed = any([CaseStatuses.PASSED.value.lower() in status.lower() for status in statuses])
     if is_passed:
         return CaseStatusData.get_passed_data()
     

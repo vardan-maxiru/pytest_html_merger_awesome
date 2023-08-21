@@ -11,6 +11,7 @@
     margin-bottom: 3px;
     font-size: 0.9rem;
     color: #2c3139;
+    cursor: pointer;
 }
 
 .case-row-headers__item {
