@@ -57,3 +57,7 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
         elem.checked ? outcomeRows[i].classList.remove('hidden') : outcomeRows[i].classList.add('hidden');
     }
 }
+
+function init() {
+    console.log("Initialize")
+}
