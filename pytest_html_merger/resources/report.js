@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function addCollapse() {
         // Add links for show/hide all
-        const resulttable = find('table.results-table');
+        const resulttable = find('#results-table');
         const showhideall = document.createElement('p');
         showhideall.innerHTML = '<a href="javascript:showAllExtras()">Show all details</a> / ' +
                                 '<a href="javascript:hideAllExtras()">Hide all details</a>';
@@ -56,6 +56,25 @@ function filterTable(elem) { // eslint-disable-line no-unused-vars
     for(let i = 0; i < outcomeRows.length; i++){
         elem.checked ? outcomeRows[i].classList.remove('hidden') : outcomeRows[i].classList.add('hidden');
     }
+}
+
+function getQueryParameter(name) {
+    const match = RegExp('[?&]' + name + '=([^&]*)').exec(window.location.search);
+    return match && decodeURIComponent(match[1].replace(/\+/g, ' '));
+}
+
+function find(selector, elem) { // eslint-disable-line no-redeclare
+    if (!elem) {
+        elem = document;
+    }
+    return elem.querySelector(selector);
+}
+
+function findAll(selector, elem) {
+    if (!elem) {
+        elem = document;
+    }
+    return toArray(elem.querySelectorAll(selector));
 }
 
 function init() {

@@ -64,7 +64,6 @@
 .case-row-results {
     display: none;
     height: 0;
-    padding: 0 10px 10px;
 }
 
 .case-row-results.open {
