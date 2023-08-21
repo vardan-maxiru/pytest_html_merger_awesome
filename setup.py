@@ -15,7 +15,7 @@ setuptools.setup(
     description=description,
     long_description=description,
     python_requires=">=3.6.0",
-    url="https://github.com/akavbathen/pytest_html_merger.git",
+    url="https://github.com/vardan-maxiru/pytest_html_merger_awesome.git",
     install_requires=install_requires,
     package_dir={"pytest_html_merger": "pytest_html_merger"},
     packages=["pytest_html_merger"],
