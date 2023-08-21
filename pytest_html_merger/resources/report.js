@@ -47,3 +47,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addCollapse()
 });
+
+function filterTable(elem) { // eslint-disable-line no-unused-vars
+    const outcomeAtt = 'data-test-result';
+    const outcome = elem.getAttribute(outcomeAtt);
+    const outcomeRows = document.querySelectorAll('.' + outcome);
+
+    for(let i = 0; i < outcomeRows.length; i++){
+        elem.checked ? outcomeRows[i].classList.remove('hidden') : outcomeRows[i].classList.add('hidden');
+    }
+}
