@@ -73,6 +73,10 @@
     height: auto;
 }
 
+.case-row-headers.hidden {
+  display: none;
+}
+
 /*------------------
 * 1. Table Layout
 *------------------*/
