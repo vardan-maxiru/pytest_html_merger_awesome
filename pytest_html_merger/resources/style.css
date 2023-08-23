@@ -77,6 +77,21 @@
   display: none;
 }
 
+.case-log {
+  color: #000;
+  border: 1px solid green;
+  padding: 3px 10px;
+  border-radius: 3px;
+  margin-left: 10px;
+  font-size: 0.85rem;
+  background: #f9f9f9;
+  cursor: pointer;
+}
+
+.case-log:hover {
+  background: #e7e7e7;
+}
+
 /*------------------
 * 1. Table Layout
 *------------------*/
