@@ -359,7 +359,7 @@ def parse_user_commands(command_line):
 
 def main(command_line=None):
     args = parse_user_commands(command_line)
-
+    print("args.log", args.log)
     merge_html_files(args.input, args.output, args.title, json.loads(args.log))
 
 
