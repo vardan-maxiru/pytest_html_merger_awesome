@@ -165,6 +165,8 @@ def merge_html_files(in_path, out_path, title, log_data):
     log_data_script_soup = BeautifulSoup(f'<script>{log_data_script}</script>', 'html.parser').find('script')
     first_file.head.append(log_data_script_soup)
 
+    first_file.body.append(get_modal())
+
     with open(out_path, "w") as f:
         f.write(str(first_file))
 
@@ -249,6 +251,10 @@ def get_case_status(soup: BeautifulSoup):
         return CaseStatusData.get_unexpected_passes_data()
     
     return {}
+
+def get_modal():
+    modal = '<div id="modal"><div id="modal-content"></div><div class="modal-back"></div></div>'
+    return BeautifulSoup(modal,'html.parser').find('div', {'id': 'modal'})
 
 def get_log_data(log_data):
     logs = {}
