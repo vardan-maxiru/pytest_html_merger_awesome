@@ -113,6 +113,15 @@ function init() {
 }
 
 function showLog(elem, key) {
-    console.log(LOG_DATA[key][elem.innerText])
     document.getElementById("modal-content").innerText = LOG_DATA[key][elem.innerText]
+    modalHandle()
+}
+
+function modalHandle() {
+    modal = document.getElementById("modal")
+    if (modal.classList.contains('open')) {
+        modal.classList.remove('open')
+    } else {
+        modal.classList.add('open')
+    }
 }
