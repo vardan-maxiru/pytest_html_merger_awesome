@@ -161,9 +161,9 @@ def merge_html_files(in_path, out_path, title, log_data):
     for cb_type in cb_types:
         set_checkbox_value(first_file, cb_type, cb_types[cb_type])
 
-    log_data_script = BeautifulSoup('script', 'html.parser').script
-    log_data_script.string = f"const LOG_DATA={json.dumps(js_log_data)};"
-    first_file.head.append(log_data_script)
+    log_data_script = f"const LOG_DATA={json.dumps(js_log_data)};"
+    log_data_script_soup = BeautifulSoup(f'<script>{log_data_script}</script>', 'html.parser').find('script')
+    first_file.head.append(log_data_script_soup)
 
     with open(out_path, "w") as f:
         f.write(str(first_file))
