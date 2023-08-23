@@ -16,6 +16,7 @@
     font-size: 0.9rem;
     color: #2c3139;
     cursor: pointer;
+    align-items: center;
 }
 
 .case-row-headers__item {
@@ -34,6 +35,12 @@
 
 .case-row-headers__item.title {
   font-style: italic;
+}
+
+.case-row-headers__item.logs {
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
 }
 
 .case-row-headers.failed {
