@@ -111,3 +111,7 @@ function findAll(selector, elem) {
 function init() {
     console.log("Initialize")
 }
+
+function showLog(elem, key) {
+    console.log(LOG_DATA[key][elem.innerText])
+}

@@ -102,7 +102,9 @@ def merge_html_files(in_path, out_path, title, log_data):
     new_table = '<div id="results-table"></div>'
     new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "results-table"})
 
+    js_log_data = {}
     log_key = case_title.replace('report', '').strip().replace(' ', '_').lower()
+    js_log_data[log_key] = get_log_data(log_data[log_key])
     
     new_case_soup = create_case_container(first_file, case_title, dur, log_data[log_key]) # first_file
     new_table_soup.append(new_case_soup)
@@ -141,6 +143,9 @@ def merge_html_files(in_path, out_path, title, log_data):
             tmp = get_checkbox_value(second_file, cb_type)
             cb_types[cb_type][0] += tmp[0]
             current_cb_types[cb_type][0] = tmp[0]
+        
+        log_key = case_title.replace('report', '').strip().replace(' ', '_').lower()
+        js_log_data[log_key] = get_log_data(log_data[log_key])
 
         new_case_soup = create_case_container(second_file, case_title, current_case_duration, i)
         new_table_soup.append(new_case_soup)
@@ -155,6 +160,10 @@ def merge_html_files(in_path, out_path, title, log_data):
 
     for cb_type in cb_types:
         set_checkbox_value(first_file, cb_type, cb_types[cb_type])
+
+    log_data_script = BeautifulSoup('script', 'html.parser').script
+    log_data_script.string = f"const LOG_DATA={json.dumps(js_log_data)};"
+    first_file.head.append(log_data_script)
 
     with open(out_path, "w") as f:
         f.write(str(first_file))
@@ -196,6 +205,7 @@ def create_case_container(soup: BeautifulSoup, title, current_case_duration, log
     new_header_item_soup = get_header_item('logs')
     for log in log_data:
         case_log_item_soup = BeautifulSoup(case_log_item, 'html.parser').span
+        case_log_item_soup.attrs['onclick'] = 'javascript:showLog(this)'
         case_log_item_soup.string = log.split('/')[-1]
         new_header_item_soup.append(case_log_item_soup)
     new_headers_soup.append(new_header_item_soup)
@@ -239,6 +249,15 @@ def get_case_status(soup: BeautifulSoup):
         return CaseStatusData.get_unexpected_passes_data()
     
     return {}
+
+def get_log_data(log_data):
+    logs = {}
+    for log in log_data:
+        log_key = log.split('/')[-1]
+        with open(log, 'r') as l:
+            logs[log_key] = l.read()
+    
+    return logs
 
 def set_checkbox_value(root_soap, cb_type, val):
     elem = root_soap.find("span", {"class": cb_type})
