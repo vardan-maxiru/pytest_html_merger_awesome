@@ -265,7 +265,7 @@ def get_log_data(log_data):
     logs = {}
     for log in log_data:
         log_key = log.split('/')[-1]
-        with open(log, 'r') as l:
+        with open(log, 'r', errors='ignore') as l:
             logs[log_key] = l.read()
     
     return logs
