@@ -102,7 +102,7 @@ def merge_html_files(in_path, out_path, title, log_data):
     new_table = '<div id="results-table"></div>'
     new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "results-table"})
 
-    log_key = case_title.replace('report', '').strip().replace(' ', '_')
+    log_key = case_title.replace('report', '').strip().replace(' ', '_').lower()
     
     new_case_soup = create_case_container(first_file, case_title, dur, log_data[log_key]) # first_file
     new_table_soup.append(new_case_soup)
