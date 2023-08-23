@@ -106,7 +106,7 @@ def merge_html_files(in_path, out_path, title, log_data):
     log_key = case_title.replace('report', '').strip().replace(' ', '_').lower()
     js_log_data[log_key] = get_log_data(log_data[log_key])
     
-    new_case_soup = create_case_container(first_file, case_title, dur, log_data[log_key]) # first_file
+    new_case_soup = create_case_container(first_file, case_title, dur, log_data, log_key) # first_file
     new_table_soup.append(new_case_soup)
 
     for i in range(len(paths)):
@@ -147,7 +147,7 @@ def merge_html_files(in_path, out_path, title, log_data):
         log_key = case_title.replace('report', '').strip().replace(' ', '_').lower()
         js_log_data[log_key] = get_log_data(log_data[log_key])
 
-        new_case_soup = create_case_container(second_file, case_title, current_case_duration, i)
+        new_case_soup = create_case_container(second_file, case_title, current_case_duration, log_data, log_key, i)
         new_table_soup.append(new_case_soup)
 
     first_file.body.append(new_table_soup)
@@ -168,7 +168,7 @@ def merge_html_files(in_path, out_path, title, log_data):
     with open(out_path, "w") as f:
         f.write(str(first_file))
 
-def create_case_container(soup: BeautifulSoup, title, current_case_duration, log_data, index = 1):
+def create_case_container(soup: BeautifulSoup, title, current_case_duration, log_data, log_key, index = 1):
     result_table = soup.find('table', {"id": "results-table"})
     result_table.attrs = {**result_table.attrs, "id": f'results-table-{index}', 'class': 'results-table'}
 
@@ -203,9 +203,9 @@ def create_case_container(soup: BeautifulSoup, title, current_case_duration, log
     
     # add logs column
     new_header_item_soup = get_header_item('logs')
-    for log in log_data:
+    for log in log_data[log_key]:
         case_log_item_soup = BeautifulSoup(case_log_item, 'html.parser').span
-        case_log_item_soup.attrs['onclick'] = 'javascript:showLog(this)'
+        case_log_item_soup.attrs['onclick'] = f'javascript:showLog(this, "{log_key}")'
         case_log_item_soup.string = log.split('/')[-1]
         new_header_item_soup.append(case_log_item_soup)
     new_headers_soup.append(new_header_item_soup)
