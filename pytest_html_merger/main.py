@@ -207,7 +207,7 @@ def create_case_container(soup: BeautifulSoup, title, current_case_duration, log
     new_header_item_soup = get_header_item('logs')
     for log in log_data[log_key]:
         case_log_item_soup = BeautifulSoup(case_log_item, 'html.parser').span
-        case_log_item_soup.attrs['onclick'] = f'javascript:showLog(this, "{log_key}")'
+        case_log_item_soup.attrs['onclick'] = f'javascript:showLog(event, this, "{log_key}")'
         case_log_item_soup.string = log.split('/')[-1]
         new_header_item_soup.append(case_log_item_soup)
     new_headers_soup.append(new_header_item_soup)

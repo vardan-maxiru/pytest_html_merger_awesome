@@ -114,7 +114,8 @@ function init() {
     console.log("Initialize")
 }
 
-function showLog(elem, key) {
+function showLog(event, elem, key) {
+    event.stopPropagation()
     document.getElementById('log-title').innerText = elem.innerText
     document.getElementById("modal-content").innerText = LOG_DATA[key][elem.innerText]
     modalHandle()
