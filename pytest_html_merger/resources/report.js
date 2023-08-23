@@ -113,5 +113,6 @@ function init() {
 }
 
 function showLog(elem, key) {
+    console.log("showLog", key, elem, elem.innerText)
     console.log(LOG_DATA[key][elem.innerText])
 }
