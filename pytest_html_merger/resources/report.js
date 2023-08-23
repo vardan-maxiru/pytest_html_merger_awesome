@@ -113,6 +113,7 @@ function init() {
 }
 
 function showLog(elem, key) {
+    document.getElementById('log-title').innerText = elem.innerText
     document.getElementById("modal-content").innerText = LOG_DATA[key][elem.innerText]
     modalHandle()
 }

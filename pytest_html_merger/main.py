@@ -253,7 +253,12 @@ def get_case_status(soup: BeautifulSoup):
     return {}
 
 def get_modal():
-    modal = '<div id="modal"><div id="modal-content"></div><div class="modal-back"></div></div>'
+    modal = '''<div id="modal">
+    <div class="modal-container">
+    <div class="modal-header"><span id="log-title"></span><span id="close-modal">x</span></div>
+    <code id="modal-content"></code>
+    </div>
+    </div>'''
     return BeautifulSoup(modal,'html.parser').find('div', {'id': 'modal'})
 
 def get_log_data(log_data):
