@@ -12,6 +12,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     })
 
+    document.getElementById('close-modal').addEventListener('click', modalHandle)
+
     function addCollapse() {
         // Add links for show/hide all
         const resulttable = find('#results-table');

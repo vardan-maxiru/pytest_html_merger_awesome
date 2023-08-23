@@ -255,7 +255,7 @@ def get_case_status(soup: BeautifulSoup):
 def get_modal():
     modal = '''<div id="modal">
     <div class="modal-container">
-    <div class="modal-header"><span id="log-title"></span><span id="close-modal">x</span></div>
+    <div class="modal-header"><span id="log-title"></span><span id="close-modal">+</span></div>
     <code id="modal-content"></code>
     </div>
     </div>'''
