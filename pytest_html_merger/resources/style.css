@@ -124,6 +124,8 @@
   font-size: 1.1rem;
   border-bottom: 1px solid #cecece;
   justify-content: space-between;
+  background: rgba(0,0,0,0.1);
+  color: #000000;
 }
 
 #modal-content {
