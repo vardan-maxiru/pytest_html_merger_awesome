@@ -5,6 +5,7 @@ from bs4 import BeautifulSoup
 import sys
 import pathlib
 import pkg_resources
+import json
 
 from helpers import CaseStatuses, CaseStatusData
 
@@ -19,7 +20,7 @@ import version as version_mod
 CHECKBOX_REGEX = r"^(?P<num>0|[1-9]\d*) (?P<txt1>.*)"
 
 
-def merge_html_files(in_path, out_path, title):
+def merge_html_files(in_path, out_path, title, log_data):
     paths = get_html_files(in_path)
     if not paths:
         raise RuntimeError(f"Was unable to find html files in {in_path}")
@@ -100,8 +101,10 @@ def merge_html_files(in_path, out_path, title):
     
     new_table = '<div id="results-table"></div>'
     new_table_soup = BeautifulSoup(new_table, 'html.parser').find('div', {"id": "results-table"})
+
+    log_key = case_title.replace('report', '').strip().replace(' ', '_')
     
-    new_case_soup = create_case_container(first_file, case_title, dur) # first_file
+    new_case_soup = create_case_container(first_file, case_title, dur, log_data[log_key]) # first_file
     new_table_soup.append(new_case_soup)
 
     for i in range(len(paths)):
@@ -156,13 +159,14 @@ def merge_html_files(in_path, out_path, title):
     with open(out_path, "w") as f:
         f.write(str(first_file))
 
-def create_case_container(soup: BeautifulSoup, title, current_case_duration, index = 1):
+def create_case_container(soup: BeautifulSoup, title, current_case_duration, log_data, index = 1):
     result_table = soup.find('table', {"id": "results-table"})
     result_table.attrs = {**result_table.attrs, "id": f'results-table-{index}', 'class': 'results-table'}
 
     new_case = '<div class="case-row"></div>'
     new_headers = '<div class="case-row-headers"></div>'
     new_results_row = '<div class="case-row-results"></div>'
+    case_log_item = '<span class="case-log"></span>'
     
     new_results_row_soup = BeautifulSoup(new_results_row, 'html.parser')
     new_results_row_soup.find('div', {"class": "case-row-results"}).append(result_table)
@@ -186,6 +190,14 @@ def create_case_container(soup: BeautifulSoup, title, current_case_duration, ind
     # add duration column
     new_header_item_soup = get_header_item('duration')
     new_header_item_soup.string = f'{current_case_duration}'
+    new_headers_soup.append(new_header_item_soup)
+    
+    # add logs column
+    new_header_item_soup = get_header_item('logs')
+    case_log_item_soup = BeautifulSoup(case_log_item, 'html.parser').span
+    for log in log_data:
+        case_log_item_soup.string = log
+        new_header_item_soup.append(case_log_item_soup)
     new_headers_soup.append(new_header_item_soup)
     
 
@@ -303,6 +315,12 @@ def parse_user_commands(command_line):
         default='',
         help="Merged report title",
     )
+    parser.add_argument(
+        "-l",
+        "--log",
+        default='',
+        help="Merged report logs data",
+    )
 
     args = parser.parse_args(command_line)
 
@@ -312,7 +330,7 @@ def parse_user_commands(command_line):
 def main(command_line=None):
     args = parse_user_commands(command_line)
 
-    merge_html_files(args.input, args.output, args.title)
+    merge_html_files(args.input, args.output, args.title, json.loads(args.log))
 
 
 if __name__ == "__main__":
